@@ -34,6 +34,10 @@ public class Venda {
     private Cartao cartao;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id_carteira", nullable = false)
+    private Carteira carteira;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_barraca", nullable = false)
     private Barraca barraca;
 
@@ -66,8 +70,9 @@ public class Venda {
 
     protected Venda() { }
 
-    public Venda(Cartao cartao, Barraca barraca, Usuario operador, String chaveUnica) {
+    public Venda(Cartao cartao, Carteira carteira, Barraca barraca, Usuario operador, String chaveUnica) {
         this.cartao = cartao;
+        this.carteira = carteira;
         this.barraca = barraca;
         this.operador = operador;
         this.chaveUnica = chaveUnica;
@@ -85,8 +90,13 @@ public class Venda {
         valorTotal = valorTotal.add(item.getSubtotal());
     }
 
+    public void definirValorTotal(BigDecimal valor) {
+        this.valorTotal = valor;
+    }
+
     public Long getIdVenda() { return idVenda; }
     public Cartao getCartao() { return cartao; }
+    public Carteira getCarteira() { return carteira; }
     public Barraca getBarraca() { return barraca; }
     public Usuario getOperador() { return operador; }
     public BigDecimal getValorTotal() { return valorTotal; }

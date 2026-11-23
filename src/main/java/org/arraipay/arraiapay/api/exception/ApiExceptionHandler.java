@@ -11,16 +11,18 @@ import java.time.OffsetDateTime;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
-
-    @ExceptionHandler(ApiNotImplementedException.class)
-    public ResponseEntity<ApiErrorResponse> endpointPendente(
-            ApiNotImplementedException exception, HttpServletRequest request) {
+    @ExceptionHandler(DominioException.class)
+    public ResponseEntity<ApiErrorResponse> dominio(DominioException exception, HttpServletRequest request) {
+        HttpStatus status;
+        if ("E09".equals(exception.getCodigo())) status = HttpStatus.FORBIDDEN;
+        else if ("E12".equals(exception.getCodigo())) status = HttpStatus.CONFLICT;
+        else if ("E23".equals(exception.getCodigo())) status = HttpStatus.UNAUTHORIZED;
+        else if ("E22".equals(exception.getCodigo())) status = HttpStatus.SERVICE_UNAVAILABLE;
+        else if ("E01".equals(exception.getCodigo()) || "E16".equals(exception.getCodigo()) || "E08".equals(exception.getCodigo())) status = HttpStatus.NOT_FOUND;
+        else status = HttpStatus.BAD_REQUEST;
         ApiErrorResponse body = new ApiErrorResponse(
-                "NOT_IMPLEMENTED",
-                exception.getMessage(),
-                null,
-                OffsetDateTime.now(),
-                request.getRequestURI());
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(body);
+                exception.getCodigo(), exception.getMessage(), null,
+                OffsetDateTime.now(), request.getRequestURI());
+        return ResponseEntity.status(status).body(body);
     }
 }

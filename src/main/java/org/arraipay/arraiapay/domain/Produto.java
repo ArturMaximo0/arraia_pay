@@ -37,11 +37,8 @@ public class Produto {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal preco;
 
-    // Null representa produto sem controle de estoque.
-    private Integer estoque;
-
-    @Column(name = "estoque_minimo")
-    private Integer estoqueMinimo;
+    @Column(length = 500)
+    private String descricao;
 
     @Column(nullable = false)
     private boolean ativo = true;
@@ -64,10 +61,8 @@ public class Produto {
     public void setCategoria(CategoriaProduto categoria) { this.categoria = categoria; }
     public BigDecimal getPreco() { return preco; }
     public void setPreco(BigDecimal preco) { this.preco = preco; }
-    public Integer getEstoque() { return estoque; }
-    public void setEstoque(Integer estoque) { this.estoque = estoque; }
-    public Integer getEstoqueMinimo() { return estoqueMinimo; }
-    public void setEstoqueMinimo(Integer estoqueMinimo) { this.estoqueMinimo = estoqueMinimo; }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
     public boolean isAtivo() { return ativo; }
     public void setAtivo(boolean ativo) { this.ativo = ativo; }
 }
