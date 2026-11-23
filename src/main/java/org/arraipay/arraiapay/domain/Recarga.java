@@ -31,6 +31,10 @@ public class Recarga {
     @JoinColumn(name = "id_cartao", nullable = false)
     private Cartao cartao;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id_carteira", nullable = false)
+    private Carteira carteira;
+
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal valor;
 
@@ -53,13 +57,17 @@ public class Recarga {
     @JoinColumn(name = "id_autorizador")
     private Usuario autorizador;
 
+    @Column(name = "chave_unica", nullable = false, unique = true, length = 100)
+    private String chaveUnica;
+
     @Column(name = "justificativa_estorno", length = 500)
     private String justificativaEstorno;
 
     protected Recarga() { }
 
-    public Recarga(Cartao cartao, BigDecimal valor, FormaPagamento formaPagamento, Usuario operador) {
+    public Recarga(Cartao cartao, Carteira carteira, BigDecimal valor, FormaPagamento formaPagamento, Usuario operador) {
         this.cartao = cartao;
+        this.carteira = carteira;
         this.valor = valor;
         this.formaPagamento = formaPagamento;
         this.operador = operador;
@@ -72,6 +80,7 @@ public class Recarga {
 
     public Long getIdRecarga() { return idRecarga; }
     public Cartao getCartao() { return cartao; }
+    public Carteira getCarteira() { return carteira; }
     public BigDecimal getValor() { return valor; }
     public FormaPagamento getFormaPagamento() { return formaPagamento; }
     public Usuario getOperador() { return operador; }
@@ -79,6 +88,8 @@ public class Recarga {
     public StatusRecarga getStatus() { return status; }
     public void setStatus(StatusRecarga status) { this.status = status; }
     public Usuario getAutorizador() { return autorizador; }
+    public String getChaveUnica() { return chaveUnica; }
+    public void setChaveUnica(String chaveUnica) { this.chaveUnica = chaveUnica; }
     public void setAutorizador(Usuario autorizador) { this.autorizador = autorizador; }
     public String getJustificativaEstorno() { return justificativaEstorno; }
     public void setJustificativaEstorno(String justificativaEstorno) { this.justificativaEstorno = justificativaEstorno; }

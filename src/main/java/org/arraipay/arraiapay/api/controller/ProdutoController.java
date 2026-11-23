@@ -1,43 +1,60 @@
 package org.arraipay.arraiapay.api.controller;
 
-import org.arraipay.arraiapay.api.ApiScaffold;
-import org.arraipay.arraiapay.api.dto.Requests.MovimentoEstoqueRequest;
+import org.arraipay.arraiapay.application.ProdutoService;
 import org.arraipay.arraiapay.api.dto.Requests.ProdutoRequest;
 import org.arraipay.arraiapay.api.dto.Requests.ProdutoUpdateRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
 public class ProdutoController {
+    private final ProdutoService produtoService;
+
+    public ProdutoController(ProdutoService produtoService) {
+        this.produtoService = produtoService;
+    }
+
     @GetMapping("/barracas/{idBarraca}/cardapio")
-    public Object cardapio(@PathVariable("idBarraca") Long idBarraca) {
-        throw ApiScaffold.pendente("GET /barracas/{id}/cardapio");
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','CAIXA','BARRACA')")
+    @Transactional(readOnly = true)
+    public Object cardapio(@PathVariable Long idBarraca) {
+        return produtoService.cardapio(idBarraca).stream().map(this::resposta).toList();
     }
 
     @PostMapping("/produtos")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Transactional
     public Object criar(@RequestBody ProdutoRequest request) {
-        throw ApiScaffold.pendente("POST /produtos");
+        return resposta(produtoService.criar(request.idBarraca(), request.nome(), request.categoria(),
+                request.descricao(), request.preco(), request.ativo()));
     }
 
     @GetMapping("/produtos/{id}")
-    public Object buscar(@PathVariable("id") Long id) {
-        throw ApiScaffold.pendente("GET /produtos/{id}");
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','BARRACA')")
+    @Transactional(readOnly = true)
+    public Object buscar(@PathVariable Long id) {
+        return resposta(produtoService.buscar(id));
     }
 
     @PatchMapping("/produtos/{id}")
-    public Object atualizar(@PathVariable("id") Long id, @RequestBody ProdutoUpdateRequest request) {
-        throw ApiScaffold.pendente("PATCH /produtos/{id}");
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Transactional
+    public Object atualizar(@PathVariable Long id, @RequestBody ProdutoUpdateRequest request) {
+        return resposta(produtoService.atualizar(id, request.nome(), request.categoria(),
+                request.preco(), request.descricao(), request.ativo()));
     }
 
-    @PostMapping("/produtos/{id}/movimentos-estoque")
-    public Object movimentarEstoque(@PathVariable("id") Long id,
-                                    @RequestBody MovimentoEstoqueRequest request) {
-        throw ApiScaffold.pendente("POST /produtos/{id}/movimentos-estoque");
+    private java.util.Map<String, Object> resposta(org.arraipay.arraiapay.domain.Produto produto) {
+        return java.util.Map.of(
+                "idProduto", produto.getIdProduto(),
+                "idBarraca", produto.getBarraca().getIdBarraca(),
+                "nomeBarraca", produto.getBarraca().getNome(),
+                "nome", produto.getNome(),
+                "categoria", produto.getCategoria().name(),
+                "descricao", produto.getDescricao() == null ? "" : produto.getDescricao(),
+                "preco", produto.getPreco(),
+                "ativo", produto.isAtivo());
     }
 }

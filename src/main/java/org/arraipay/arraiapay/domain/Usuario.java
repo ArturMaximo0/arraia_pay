@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.arraipay.arraiapay.domain.enums.PerfilUsuario;
 import org.arraipay.arraiapay.domain.enums.PerfilUsuarioConverter;
 
@@ -27,6 +28,7 @@ public class Usuario {
     @Column(nullable = false, unique = true, length = 100)
     private String login;
 
+    @JsonIgnore
     @Column(name = "senha_hash", nullable = false, length = 255)
     private String senhaHash;
 

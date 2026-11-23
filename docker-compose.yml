@@ -1,0 +1,21 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: arraiapay
+      MYSQL_USER: arraiapay
+      MYSQL_PASSWORD: arraiapay
+      MYSQL_ROOT_PASSWORD: arraiapay_root
+    ports:
+      - "3306:3306"
+    volumes:
+      - arraiapay_mysql:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --max-connections=300
+      - --innodb-buffer-pool-size=512M
+
+volumes:
+  arraiapay_mysql:

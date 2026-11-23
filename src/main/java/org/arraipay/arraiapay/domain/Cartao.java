@@ -30,15 +30,13 @@ public class Cartao {
     @Column(name = "codigo_qr", nullable = false, unique = true, length = 50)
     private String codigoQr;
 
-    @Column(name = "nome_participante", length = 100)
-    private String nomeParticipante;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "id_cliente", nullable = false)
+    private Cliente cliente;
 
     @Convert(converter = StatusCartaoConverter.class)
     @Column(nullable = false, length = 20)
     private StatusCartao status = StatusCartao.ATIVO;
-
-    @Column(name = "saldo_atual", nullable = false, precision = 10, scale = 2)
-    private BigDecimal saldoAtual = BigDecimal.ZERO;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cartao_anterior")
@@ -52,27 +50,24 @@ public class Cartao {
 
     protected Cartao() { }
 
-    public Cartao(String nomeParticipante) {
-        this.nomeParticipante = nomeParticipante;
+    public Cartao(Cliente cliente) {
+        this.cliente = cliente;
     }
 
     @PrePersist
     void prepararCadastro() {
         if (codigoQr == null || codigoQr.isBlank()) codigoQr = UUID.randomUUID().toString();
         if (dataCriacao == null) dataCriacao = LocalDateTime.now();
-        if (saldoAtual == null) saldoAtual = BigDecimal.ZERO;
         if (status == null) status = StatusCartao.ATIVO;
     }
 
     public Long getIdCartao() { return idCartao; }
     public String getCodigoQr() { return codigoQr; }
     public void setCodigoQr(String codigoQr) { this.codigoQr = codigoQr; }
-    public String getNomeParticipante() { return nomeParticipante; }
-    public void setNomeParticipante(String nomeParticipante) { this.nomeParticipante = nomeParticipante; }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
     public StatusCartao getStatus() { return status; }
     public void setStatus(StatusCartao status) { this.status = status; }
-    public BigDecimal getSaldoAtual() { return saldoAtual; }
-    public void setSaldoAtual(BigDecimal saldoAtual) { this.saldoAtual = saldoAtual; }
     public Cartao getCartaoAnterior() { return cartaoAnterior; }
     public void setCartaoAnterior(Cartao cartaoAnterior) { this.cartaoAnterior = cartaoAnterior; }
     public LocalDateTime getDataCriacao() { return dataCriacao; }

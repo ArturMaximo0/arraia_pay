@@ -1,0 +1,9 @@
+{
+  "name": "ArraiPay",
+  "short_name": "ArraiPay",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f5ef",
+  "theme_color": "#1f7a8c",
+  "icons": []
+}
